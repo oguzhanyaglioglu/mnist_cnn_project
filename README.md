@@ -194,4 +194,4 @@ Possible next steps:
 - add README examples with output screenshots
 - add per-class accuracy
 - add precision/recall/F1 metrics
-- make checkpoint/output folders more structured
+- make checkpoint/output folders more  structured
