@@ -1,0 +1,27 @@
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE files
+.idea/
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Data and outputs
+src/data/
+outputs/
+
+# Model checkpoints
+*.pt
+*.pth
+
+# OS files
+.DS_Store
+Thumbs.db
