@@ -1,5 +1,6 @@
 # Genel yardımcı fonksiyonların olduğu dosya
 import os
+import json
 import random
 import torch
 from torch import nn
@@ -10,6 +11,12 @@ def ensure_output_dir(path: str) -> None:
     folder = os.path.dirname(path) # fonksiyon çağrısında verilen yolun klasör kısmını alır; "outputs/best_mnist_cnn.pt" -> "outputs"
     if folder: # verilen klasör gerçekten var mı yok mu(dosyamda "outputs" klasörü var mı yok mu)
         os.makedirs(folder, exist_ok=True) # klasör varsa hata verme, yoksa oluştur
+
+def save_json(data:dict, path: str) -> None:
+    ensure_output_dir(path) # outputs -> var mı?
+    with open(path, "w", encoding="utf-8") as f: # dosyayı yazma modunda(w) açar, f olarak alır, utf-8 metin kodlamasını belirler(türkçe karakterlerde sorun yaşamamak için good practice)
+        # json.dump -> python verisini alıp, json formatında bir dosyanınn("training_history.json") içine yazar.
+        json.dump(data, f, indent=4) # data -> history, f -> training_history.json daha geniş okunabilir olmasını sağlar
 
 def set_seed(seed: int) -> None:
     random.seed(seed)

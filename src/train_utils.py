@@ -3,7 +3,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 from config import Config
 from model import build_model
-from utils import save_checkpoint
+from utils import save_checkpoint, save_json
 
 def train_one_epoch(cfg: Config, model: nn.Module, train_loader: DataLoader,
                     criterion: nn.Module, optimizer: torch.optim.Optimizer) -> tuple[float, float]:
@@ -111,4 +111,5 @@ def run_training(cfg: Config, train_loader: DataLoader, test_loader: DataLoader)
 
     print("Best test acc: ", best_test_acc)
     print("Best test loss: ", best_test_loss)
+    save_json(history, cfg.history_path)
     return history
