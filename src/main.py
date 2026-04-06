@@ -36,12 +36,12 @@ from debug_train import (
 def run_project(cfg: Config) -> None:
     train_loader, test_loader = build_dataloaders(cfg)
     history = run_training(cfg, train_loader, test_loader)
-    predict_one_batch(cfg)
+    #predict_one_batch(cfg)
     print("\n[history]")
     print(history)
-    plot_history(history, cfg.outputs_dir)
-    show_misclassified_images(cfg, cfg.outputs_dir)
-    show_confusion_matrix(cfg, cfg.outputs_dir)
+    #plot_history(history, cfg.outputs_dir)
+    #show_misclassified_images(cfg, cfg.outputs_dir)
+    #show_confusion_matrix(cfg, cfg.outputs_dir)
 
 def run_debug(cfg: Config) -> None:
     debug_config(cfg)

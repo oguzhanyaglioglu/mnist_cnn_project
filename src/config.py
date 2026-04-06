@@ -17,6 +17,7 @@ class Config:
     data_dir: str = str(SRC_DIR / "data")
     outputs_dir: str = str(OUTPUTS_DIR)
     ckpt_path: str = str(OUTPUTS_DIR / "best_mnist_cnn.pt")
+    history_path: str = str(OUTPUTS_DIR / "training_history.json")
 
 
 
