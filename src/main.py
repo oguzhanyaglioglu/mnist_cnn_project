@@ -1,7 +1,7 @@
 from config import Config
 from data_utils import build_dataloaders
 from train_utils import run_training
-from utils import set_seed
+from utils import set_seed, load_json
 
 from eval_utils import (
     plot_history,
@@ -43,6 +43,15 @@ def run_project(cfg: Config) -> None:
     #show_misclassified_images(cfg, cfg.outputs_dir)
     #show_confusion_matrix(cfg, cfg.outputs_dir)
 
+def run_from_saved_history(cfg: Config) -> None:
+    loaded_history = load_json(cfg.history_path)
+
+    print("\n[loaded history]")
+    print(loaded_history)
+
+    plot_history(loaded_history, cfg.outputs_dir)
+
+
 def run_debug(cfg: Config) -> None:
     debug_config(cfg)
     debug_seed(cfg)
@@ -66,9 +75,12 @@ def run_debug(cfg: Config) -> None:
 if __name__ == "__main__":
 
     cfg = Config()
+    # print(cfg)  -> <__main__.Config object at 0x000001F3A8C2D7F0> -> normal class çıktısı
+    # print(cfg) -> Config(seed=42, batch_size=64, lr=0.001) -> dataclass çıktısı
     set_seed(cfg.seed)
 
-    run_project(cfg)
+    # run_project(cfg)
+    run_from_saved_history(cfg)
     # run_debug(cfg)
 
 

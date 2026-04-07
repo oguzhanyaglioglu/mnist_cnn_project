@@ -16,7 +16,12 @@ def save_json(data:dict, path: str) -> None:
     ensure_output_dir(path) # outputs -> var mı?
     with open(path, "w", encoding="utf-8") as f: # dosyayı yazma modunda(w) açar, f olarak alır, utf-8 metin kodlamasını belirler(türkçe karakterlerde sorun yaşamamak için good practice)
         # json.dump -> python verisini alıp, json formatında bir dosyanınn("training_history.json") içine yazar.
-        json.dump(data, f, indent=4) # data -> history, f -> training_history.json daha geniş okunabilir olmasını sağlar
+        json.dump(data, f, indent=4) # data -> history, f -> training_history.json, indent daha geniş okunabilir olmasını sağlar
+
+def load_json(path: str) -> dict:
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f) # json objesini alıp pyhton veri tipine(burda dict) çevirir.
+
 
 def set_seed(seed: int) -> None:
     random.seed(seed)
