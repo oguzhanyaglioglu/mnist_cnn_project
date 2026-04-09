@@ -31,6 +31,8 @@ def show_misclassified_images(cfg: Config, save_dir: str, ckpt_path: str | None 
     if ckpt_path is None:
         ckpt_path = cfg.ckpt_path
 
+    os.makedirs(save_dir, exist_ok=True)
+
     _, test_loader = build_dataloaders(cfg)
 
     model = build_model(cfg)

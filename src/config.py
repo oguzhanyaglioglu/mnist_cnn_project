@@ -14,7 +14,7 @@ OUTPUTS_ROOT = BASE_DIR / "outputs"
 #         self.lr = lr
 #         ..
 
-# @ -> decorator, bir fonksiyon ya da sınıfın davranışını biraz değiştiren geliştiren ara.
+# @ -> decorator, bir fonksiyon ya da sınıfın davranışını biraz değiştiren geliştiren araç.
 # dataclass; ayar, bilgi, birkaç değeri bir arada toplama gibi veri tutan sınıfları daha kısa ve temiz yazmak için kullanılan "decorator"'dür
 @dataclass
 class Config:
@@ -33,7 +33,7 @@ class Config:
     outputs_root: str = str(OUTPUTS_ROOT)
     run_name: str = "baseline"
 
-    # property bir fonksiyonu, dışarıdan bakınca(çağırınca), normal değişken/özellik gibi kullanmanı sağlayan dekoratördür.
+    # property bir fonksiyonu, dışarıdan bakınca(çağırılınca), normal değişken/özellik gibi kullanmanı sağlayan dekoratördür.
     # cfg.output_dir() -> cfg.ouput_dir
     @property
     def outputs_dir(self) -> str:
