@@ -41,11 +41,7 @@ def run_project(cfg: Config) -> dict:
     train_loader, test_loader = build_dataloaders(cfg)
     history = run_training(cfg, train_loader, test_loader)
 
-    #predict_one_batch(cfg)
-
     plot_history(history, cfg.outputs_dir)
-    show_misclassified_images(cfg, cfg.outputs_dir)
-    show_confusion_matrix(cfg, cfg.outputs_dir)
 
     print("\n[history]")
     print(history)
@@ -200,14 +196,45 @@ def run_debug(cfg: Config) -> None:
     # debug_load_best_and_predict(cfg)
     # debug_misclassified(cfg, max_show=15)
 
+def run_by_mode(mode: str) -> None:
+    print("\n" + "=" * 60)
+    print(f"[mode] {mode}")
+
+    if mode == "train":
+        run_hparam_experiments()
+
+    elif mode == "eval":
+        evaluate_best_run()
+
+    elif mode == "full":
+        run_full_pipeline()
+
+    elif mode == "debug":
+        cfg = Config()
+        set_seed(cfg.seed)
+        run_debug(cfg)
+
+    else:
+        # ValueError -> değişken var fakat içindeki değer yanlışsa(mode="abc) dönen hata türü
+        # raise -> bilerek hata fırlatmak, yani program kendi kendi hata vermiyor, biz diyoruz ki mode yanlış hata ver
+        raise ValueError(
+            f"Unknown mode: {mode}."
+            f"Choose from ['train', 'eval', 'full', 'debug']"
+        )
+
+
+
 if __name__ == "__main__":
     # cfg = Config()
     # print(cfg)  -> <__main__.Config object at 0x000001F3A8C2D7F0> -> normal class çıktısı
     # print(cfg) -> Config(seed=42, batch_size=64, lr=0.001) -> dataclass çıktısı
 
-    run_full_pipeline()
-    #evaluate_best_run()
-    #run_hparam_experiment()
+    run_mode = "full"
+    run_by_mode(run_mode)
+
+    # run_full_pipeline()
+    # evaluate_best_run()
+    # run_hparam_experiment()
 
     # Tek bir kaydedilmiş run'ın logunu tekrar çizdirmek için
     # cfg = Config(run_name="exp_01_baseline_lr1e3_bs64")
