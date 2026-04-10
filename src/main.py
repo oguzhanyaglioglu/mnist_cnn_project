@@ -1,7 +1,7 @@
 from config import Config
 from data_utils import build_dataloaders
 from train_utils import run_training
-from utils import set_seed, load_json
+from utils import set_seed, load_json, save_json
 
 from eval_utils import (
     plot_history,
@@ -129,6 +129,14 @@ def run_hparam_experiment() -> None:
     # 1.exp_01_baseline_lr1e3_bs64 | best_acc = 0.9891 | ...
     # 2.exp_03_lr1e3_bs128 | best_acc = 0.9884 | ...
     # 3.exp_02_lr5e4_bs64 | best_acc = 0.9872 | ...
+
+    summary_cfg = Config()
+    save_json(results, summary_cfg.experiment_results_path)
+    save_json(results[0], summary_cfg.best_experiment_path)
+
+    print("\n[save files]")
+    print(summary_cfg.experiment_results_path)
+    print(summary_cfg.best_experiment_path)
 
 def run_debug(cfg: Config) -> None:
     debug_config(cfg)

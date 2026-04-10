@@ -47,5 +47,14 @@ class Config:
     def history_path(self) -> str:
         return str(Path(self.outputs_dir) / "training_history.json")
 
+    @property
+    def experiment_results_path(self) -> str:
+        return str(Path(self.outputs_root) / "experiment_results.json")
+
+    @property
+    def best_experiment_path(self) -> str:
+        return str(Path(self.outputs_root) / "best_experiment.json")
+
+
 
 
