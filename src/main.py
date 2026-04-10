@@ -74,7 +74,8 @@ def run_from_saved_history(cfg: Config) -> None:
     plot_history(loaded_history, cfg.outputs_dir)
 
 
-def run_hparam_experiment() -> None:
+
+def run_hparam_experiments() -> None:
 
     # deney_listesi oluştur
     # sonuç_listesi oluştur
@@ -138,6 +139,47 @@ def run_hparam_experiment() -> None:
     print(summary_cfg.experiment_results_path)
     print(summary_cfg.best_experiment_path)
 
+def load_best_experiment_config() -> Config:
+    summary_cfg = Config()
+    best_experiment = load_json(summary_cfg.best_experiment_path)
+
+    best_run_name = best_experiment["run_name"]
+
+    cfg = Config(
+        run_name=best_run_name,
+        lr=best_experiment["lr"],
+        batch_size=best_experiment["batch_size"]
+    )
+
+    print("\n[best_experiment_loaded]")
+    print(best_experiment)
+
+    return cfg
+
+def evaluate_best_run() -> None:
+    cfg = load_best_experiment_config()
+
+    print("\n[evaluating best run]")
+    print(f"run_name: {cfg.run_name}")
+    print(f"ckpt_path: {cfg.ckpt_path}")
+    print(f"history_path: {cfg.history_path}")
+
+    run_from_saved_history(cfg)
+    predict_one_batch(cfg)
+    show_confusion_matrix(cfg, cfg.outputs_dir)
+    show_misclassified_images(cfg, cfg.outputs_dir)
+
+def run_full_pipeline() -> None:
+    print("\n" + "=" * 60)
+    print("\n[full pipiline started]")
+
+    run_hparam_experiments()
+    evaluate_best_run()
+
+    print("\n" + "=" * 60)
+    print("[full pipeline finished]")
+
+
 def run_debug(cfg: Config) -> None:
     debug_config(cfg)
     debug_seed(cfg)
@@ -163,7 +205,9 @@ if __name__ == "__main__":
     # print(cfg)  -> <__main__.Config object at 0x000001F3A8C2D7F0> -> normal class çıktısı
     # print(cfg) -> Config(seed=42, batch_size=64, lr=0.001) -> dataclass çıktısı
 
-    run_hparam_experiment()
+    run_full_pipeline()
+    #evaluate_best_run()
+    #run_hparam_experiment()
 
     # Tek bir kaydedilmiş run'ın logunu tekrar çizdirmek için
     # cfg = Config(run_name="exp_01_baseline_lr1e3_bs64")

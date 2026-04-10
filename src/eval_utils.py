@@ -25,7 +25,7 @@ def predict_one_batch(cfg: Config, ckpt_path: str | None = None) -> None:
 
     print("\n[predict_one_batch]")
     print("true labels: ", y[:10].tolist())
-    print("pred labels: ", preds[:10].tolist())
+    print("pred labels: ",   preds[:10].tolist())
 
 def show_misclassified_images(cfg: Config, save_dir: str, ckpt_path: str | None = None, max_show: int = 9) -> None:
     if ckpt_path is None:
