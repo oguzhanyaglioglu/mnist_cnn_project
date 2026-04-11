@@ -21,6 +21,7 @@ class Config:
     seed: int = 42
     batch_size: int = 64
     epochs: int = 15
+    earlt_stopping_patience: int = 3
     lr: float = 1e-3 # 1 * (10 ^ -3) = 0.001
 
     scheduler_name: str | None = None
