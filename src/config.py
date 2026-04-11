@@ -21,7 +21,17 @@ class Config:
     seed: int = 42
     batch_size: int = 64
     epochs: int = 15
-    lr: float = 1e-3
+    lr: float = 1e-3 # 1 * (10 ^ -3) = 0.001
+
+    scheduler_name: str | None = None
+    # StepLr ayarları
+    step_size: int = 3 # 3 epoch'da bir lr'i güncelle
+    gamma: float = 0.1 # her güncellemede mevcut step size'ı 0.1 ile çarp, mevcut 0.001 * gamma 0.1 = 0.0001
+    # ReduceLROnPlateau ayarları
+    plateau_factor: float = 0.1 # mevcut step size'ı kaç ile çarpıp güncelleyeceğm(Steplr'deki gamma mantığı)
+    # kaç epoch boyunca loss, accurucy vb. başarı metriklerinde(loss daha iyi sonuç verir), gelişme(improvement) olmazsa duracağım?
+    plateau_patience: int = 2 # 2 epoch boyunca sabret(patience), 3. epoch'da da gelişme olmazsa lr'i güncelle
+
     num_workers: int = 0
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
     data_dir: str = str(SRC_DIR / "data")

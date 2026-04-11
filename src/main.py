@@ -215,7 +215,7 @@ def run_by_mode(mode: str) -> None:
         run_debug(cfg)
 
     else:
-        # ValueError -> değişken var fakat içindeki değer yanlışsa(mode="abc) dönen hata türü
+        # ValueError -> değişken var fakat içindeki değer yanlışsa(exp; mode="abc") dönen hata türü
         # raise -> bilerek hata fırlatmak, yani program kendi kendi hata vermiyor, biz diyoruz ki mode yanlış hata ver
         raise ValueError(
             f"Unknown mode: {mode}."
