@@ -4,6 +4,30 @@ from torch.utils.data import DataLoader
 from config import Config
 from model import build_model
 from utils import save_checkpoint, save_json
+from torch.optim.lr_scheduler import StepLR, ReduceLROnPlateau
+
+def build_scheduler(cfg, optimizer):
+    if cfg.scheduler_name is None:
+        return None
+
+    if cfg.scheduler_name.lower() == "steplr":
+        return StepLR(
+            optimizer,
+            step_size=cfg.step_size,
+            gamma=cfg.gamma
+        )
+    if cfg.scheduler_name.lower() == "plateau":
+        return ReduceLROnPlateau(
+            optimizer,
+            mode="min",
+            factor=cfg.plateau_factor,
+            patience=cfg.plateau_patience,
+        )
+
+    raise ValueError(
+        f"Unknown scheduler_name: {cfg.scheduler_name}. "
+        f"Choose from ['step', 'plateau']"
+    )
 
 def train_one_epoch(cfg: Config, model: nn.Module, train_loader: DataLoader,
                     criterion: nn.Module, optimizer: torch.optim.Optimizer) -> tuple[float, float]:
@@ -20,8 +44,11 @@ def train_one_epoch(cfg: Config, model: nn.Module, train_loader: DataLoader,
         logits = model(x)
         loss = criterion(logits, y)
 
+        # onceki iterasyondan kalan gradientler sifirlanir
         optimizer.zero_grad()
+        # backpropagation yapılır ve loss'a gore gradientler hesaplanir.
         loss.backward()
+        # hesaplanan gradientler kullanilarak model parametreleri optimizer tarafindan guncellenir
         optimizer.step()
 
         preds = logits.argmax(dim=1)
@@ -113,3 +140,4 @@ def run_training(cfg: Config, train_loader: DataLoader, test_loader: DataLoader)
     print("Best test loss: ", best_test_loss)
     save_json(history, cfg.history_path)
     return history
+
