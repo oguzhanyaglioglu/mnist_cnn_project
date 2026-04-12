@@ -52,7 +52,8 @@ def run_project(cfg: Config) -> dict:
         "batch_size": cfg.batch_size,
         "epochs_ran": len(history["train_loss"]),
         "best_test_acc": max(history["test_acc"]),
-        "best_test_loss": min(history["test_loss"])
+        "best_test_loss": min(history["test_loss"]),
+        "scheduler_name": cfg.scheduler_name
     }
 
     print("\n[result]")
@@ -85,9 +86,10 @@ def run_hparam_experiments() -> None:
     # hepsini ekrana yazdır
 
     experiments = [
-        Config(run_name="exp_01_baseline_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=10),
-        Config(run_name="exp_02_lr5e4_bs64", lr=5e-4, batch_size=64, epochs=10),
-        Config(run_name="exp_03_lr1e3_bs128", lr=1e-3, batch_size=128, epochs=10)
+        Config(run_name="exp_01_baseline_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=10, scheduler_name=None),
+        Config(run_name="exp_02_lr5e4_bs64", lr=5e-4, batch_size=64, epochs=10, scheduler_name=None),
+        Config(run_name="exp_03_lr1e3_bs128", lr=1e-3, batch_size=128, epochs=10, scheduler_name=None),
+        Config(run_name="exp_04_steplr_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=10, scheduler_name="steplr", step_size=3, gamma=0.1)
     ]
 
     results = []
@@ -117,8 +119,8 @@ def run_hparam_experiments() -> None:
             f"best_acc={r['best_test_acc']:.4f} | "
             f"best_loss={r['best_test_loss']:.4f} | "
             f"lr={r['lr']} | bs={r['batch_size']} | "
+            f"scheduler={r['scheduler_name']} | "
             f"epochs_ran={r['epochs_ran']}"
-
         )
         # exp; 1. exp_01_baseline_lr1e3_bs64 | best_acc=0.9821 | best_loss=0.0542 | lr=0.001 | bs=64 | epochs_ran=10
 
