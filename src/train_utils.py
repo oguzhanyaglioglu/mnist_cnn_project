@@ -137,7 +137,7 @@ def build_scheduler(cfg, optimizer):
     if cfg.scheduler_name is None:
         return None
 
-    if cfg.scheduler_name.lower() == "steplr":
+    if cfg.scheduler_name.lower() == "step":
         return StepLR(
             optimizer,
             step_size=cfg.step_size,

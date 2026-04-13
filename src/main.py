@@ -58,6 +58,19 @@ def run_project(cfg: Config) -> dict:
         "scheduler_name": cfg.scheduler_name
     }
 
+    if cfg.scheduler_name == "step":
+        result["scheduler_config"] = {
+            "step_size": cfg.step_size,
+            "gamma": cfg.gamma
+        }
+    elif cfg.scheduler_name == "plateau":
+        result["scheduler_config"] = {
+            "factor": cfg.plateau_factor,
+            "plateau_patience": cfg.plateau_patience
+        }
+    else:
+        result["scheduler_config"] = None
+
     print("\n[result]")
     print(result)
     return result
@@ -90,7 +103,8 @@ def run_hparam_experiments() -> None:
         Config(run_name="exp_01_baseline_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=10, scheduler_name=None),
         Config(run_name="exp_02_lr5e4_bs64", lr=5e-4, batch_size=64, epochs=10, scheduler_name=None),
         Config(run_name="exp_03_lr1e3_bs128", lr=1e-3, batch_size=128, epochs=10, scheduler_name=None),
-        Config(run_name="exp_04_steplr_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=10, scheduler_name="steplr", step_size=3, gamma=0.1)
+        Config(run_name="exp_04_steplr_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=10, scheduler_name="step", step_size=3, gamma=0.1),
+        Config(run_name="exp_05_steplr_step5_gamma05_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=10, scheduler_name="step", step_size=5, gamma=0.5)
     ]
 
     results = []
@@ -115,12 +129,17 @@ def run_hparam_experiments() -> None:
     print("\n" + "=" * 60)
     print("[experiment_summary]")
     for i, r in enumerate(results, start=1):
+        scheduler_info = (
+            f"{r['scheduler_name']} {r['scheduler_config']}"
+            if r["scheduler_name"] is not None
+            else "None"
+        )
         print(
             f"{i}. {r['run_name']} | "
             f"best_acc={r['best_test_acc']:.4f} | "
             f"best_loss={r['best_test_loss']:.4f} | "
             f"lr={r['lr']} | bs={r['batch_size']} | "
-            f"scheduler={r['scheduler_name']} | "
+            f"scheduler={scheduler_info} | "
             f"epochs_ran={r['epochs_ran']}"
         )
         # exp; 1. exp_01_baseline_lr1e3_bs64 | best_acc=0.9821 | best_loss=0.0542 | lr=0.001 | bs=64 | epochs_ran=10
