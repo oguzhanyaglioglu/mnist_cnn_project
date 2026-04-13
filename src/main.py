@@ -5,6 +5,7 @@ from utils import set_seed, load_json, save_json
 
 from eval_utils import (
     plot_history,
+    plot_lr_curve,
     predict_one_batch,
     show_confusion_matrix,
     show_misclassified_images,
@@ -42,6 +43,7 @@ def run_project(cfg: Config) -> dict:
     history = run_training(cfg, train_loader, test_loader)
 
     plot_history(history, cfg.outputs_dir)
+    plot_lr_curve(history, cfg.outputs_dir)
 
     print("\n[history]")
     print(history)
@@ -69,8 +71,7 @@ def run_from_saved_history(cfg: Config) -> None:
     print(loaded_history)
 
     plot_history(loaded_history, cfg.outputs_dir)
-
-
+    plot_lr_curve(loaded_history, cfg.outputs_dir)
 
 def run_hparam_experiments() -> None:
 
@@ -231,7 +232,7 @@ if __name__ == "__main__":
     # print(cfg)  -> <__main__.Config object at 0x000001F3A8C2D7F0> -> normal class çıktısı
     # print(cfg) -> Config(seed=42, batch_size=64, lr=0.001) -> dataclass çıktısı
 
-    run_mode = "full"
+    run_mode = "train"
     run_by_mode(run_mode)
 
     # run_full_pipeline()

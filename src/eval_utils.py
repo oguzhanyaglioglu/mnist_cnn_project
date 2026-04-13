@@ -145,7 +145,7 @@ def plot_history(history: dict, save_dir: str) -> None:
     epochs =  range(1, len(history["train_loss"]) + 1) # 3 epoch olduğu için (1, 4) epoch range'i oluşturduk, bunu x değerleri olarak kullacağım
 
     plt.figure(figsize=(6, 4))
-    # x eksenindeki epoch'a karşılık gelen train loss değeri, bu kesişim "o" olarak işaretlenecek, bu 3 değerden eğri çizilecek, etkiteki train_loss olacak
+    # x eksenindeki epoch'a karşılık gelen train loss değeri, bu kesişim "o" olarak işaretlenecek, bu 3 değerden eğri çizilecek, eğrinin etiketi train_loss olacak
     plt.plot(epochs, history["train_loss"], marker="o", label="train_loss")
     plt.plot(epochs, history["test_loss"], marker="o", label="test_loss")
     plt.title("Loss Curve")
@@ -168,3 +168,32 @@ def plot_history(history: dict, save_dir: str) -> None:
     plt.tight_layout()
     plt.savefig(os.path.join(save_dir, "accuracy_curve.png"))
     plt.show()
+
+def plot_lr_curve(history: dict, save_dir: str) -> None:
+
+    lr_values = history.get("lr")
+
+    if lr_values is None or len(lr_values) == 0:
+        print("[plot_lr_curve] No learning rate data found")
+        return
+
+    # set() -> aynı olan değerleri tekelleştirir, örn; lr_values = [0.001, 0.001, 0.0001, 0.0001] -> set(lr_values) -> {0.001, 0.0001}
+    if len(set(lr_values)) == 1: # eğer true ise, o liste sadece tek bir elemandan oluşuyor -> aynı eleman tekrar ediyor
+        print("[plot_lr_curve] There is not scheduler so learning rate didn't change. Skipping LR curve")
+        return
+
+    os.makedirs(save_dir, exist_ok=True)
+
+    epochs = range(1, len(lr_values) + 1)
+
+    plt.figure(figsize=(6, 4))
+    plt.plot(epochs, lr_values, marker="o", label="lr")
+    plt.title("Learning Rate Curve")
+    plt.xlabel("Epoch")
+    plt.ylabel("Learning Rate")
+    plt.xticks(list(epochs))
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(os.path.join(save_dir, "lr_curve.png"))
+    plt.show()
+
