@@ -95,14 +95,15 @@ def run_training(cfg: Config, train_loader: DataLoader, test_loader: DataLoader)
         history["test_loss"].append(test_loss)
         history["test_acc"].append(test_acc)
 
-        current_lr = optimizer.param_groups[0]["lr"]
+        current_lr = optimizer.param_groups[0]["lr"] # epoch içinde kullanılan lr
+
         history["lr"].append(current_lr)
 
         print(
             f"Epoch {epoch:02d}/{cfg.epochs} | "# 02d -> 2 basamaklı göster -> 01, 02, 03
             f"train_loss={train_loss:.4f} acc={train_acc:.4f} | "# .4f - > virgülden sonra 4 hane = 0.123456 -> 0.1234
             f"test_loss={test_loss:.4f} acc={test_acc:.4f} | "
-            f"lr: {current_lr:.6f}"
+            f"current_lr: {current_lr:.6f} | "
         )
 
         if test_acc > best_test_acc:
@@ -121,10 +122,15 @@ def run_training(cfg: Config, train_loader: DataLoader, test_loader: DataLoader)
             break
 
         if scheduler is not None:
-            if cfg.scheduler_name.lower() == "plateau":
+            if cfg.scheduler_name is not None and cfg.scheduler_name.lower() == "plateau":
                 scheduler.step(test_loss)
             else:
                 scheduler.step()
+                # lr doğru şekilde, düşmesi gereken yerde düştü mü kontrolu
+                # scheduler.get_last_lr()[0] # step() sonrası yeni lr, sonraki epoch'da kullanılacak lr
+
+        # lr_next = optimizer.param_groups[0]["lr"]
+        # print(f"[scheduler debug] current: {current_lr:.6f} | next: {lr_next}:.6f")
 
 
     print("Best test acc: ", best_test_acc)

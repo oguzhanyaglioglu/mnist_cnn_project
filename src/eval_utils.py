@@ -179,7 +179,7 @@ def plot_lr_curve(history: dict, save_dir: str) -> None:
 
     # set() -> aynı olan değerleri tekelleştirir, örn; lr_values = [0.001, 0.001, 0.0001, 0.0001] -> set(lr_values) -> {0.001, 0.0001}
     if len(set(lr_values)) == 1: # eğer true ise, o liste sadece tek bir elemandan oluşuyor -> aynı eleman tekrar ediyor
-        print("[plot_lr_curve] There is not scheduler so learning rate didn't change. Skipping LR curve")
+        print("[plot_lr_curve] Learning rate did not change during this run.")
         return
 
     os.makedirs(save_dir, exist_ok=True)

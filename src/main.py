@@ -55,7 +55,8 @@ def run_project(cfg: Config) -> dict:
         "epochs_ran": len(history["train_loss"]),
         "best_test_acc": max(history["test_acc"]),
         "best_test_loss": min(history["test_loss"]),
-        "scheduler_name": cfg.scheduler_name
+        "scheduler_name": cfg.scheduler_name,
+        "scheduler_config": None
     }
 
     if cfg.scheduler_name == "step":
@@ -68,8 +69,7 @@ def run_project(cfg: Config) -> dict:
             "factor": cfg.plateau_factor,
             "plateau_patience": cfg.plateau_patience
         }
-    else:
-        result["scheduler_config"] = None
+
 
     print("\n[result]")
     print(result)
@@ -104,7 +104,9 @@ def run_hparam_experiments() -> None:
         Config(run_name="exp_02_lr5e4_bs64", lr=5e-4, batch_size=64, epochs=10, scheduler_name=None),
         Config(run_name="exp_03_lr1e3_bs128", lr=1e-3, batch_size=128, epochs=10, scheduler_name=None),
         Config(run_name="exp_04_steplr_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=10, scheduler_name="step", step_size=3, gamma=0.1),
-        Config(run_name="exp_05_steplr_step5_gamma05_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=10, scheduler_name="step", step_size=5, gamma=0.5)
+        Config(run_name="exp_05_steplr_step5_gamma05_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=10, scheduler_name="step", step_size=5, gamma=0.5),
+        Config(run_name="exp_06_plateau_factor05_pat1_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=10, scheduler_name="plateau", plateau_factor=0.5, plateau_patience=1),
+        Config(run_name="exp_07_plateau_factor05_pat0_ep12_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=12,scheduler_name="plateau", plateau_factor=0.5, plateau_patience=0)
     ]
 
     results = []
