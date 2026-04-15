@@ -71,8 +71,8 @@ def run_training(cfg: Config, train_loader: DataLoader, test_loader: DataLoader)
 
     criterion = nn.CrossEntropyLoss()
 
-    optimizer = torch.optim.Adam(model.parameters(), lr=cfg.lr)
-    scheduler = build_scheduler(cfg, optimizer)
+    optimizer = torch.optim.Adam(model.parameters(), lr=cfg.lr, weight_decay=cfg.weight_decay)
+    scheduler = build_scheduler(cfg, optimizer,)
 
     best_test_acc = 0.0
     best_test_loss = float("inf") # küçük loss aradığımız için başlangıç lossunu "sonsuz" ayarlıyoruz
@@ -83,7 +83,7 @@ def run_training(cfg: Config, train_loader: DataLoader, test_loader: DataLoader)
         "train_acc": [],
         "test_loss": [],
         "test_acc": [],
-        "lr": [],
+        "lr": []
     }
 
     for epoch in range(1, cfg.epochs + 1):# 1, 3 + 1 = 4, range -> 1, 2, 3
@@ -96,14 +96,13 @@ def run_training(cfg: Config, train_loader: DataLoader, test_loader: DataLoader)
         history["test_acc"].append(test_acc)
 
         current_lr = optimizer.param_groups[0]["lr"] # epoch içinde kullanılan lr
-
         history["lr"].append(current_lr)
 
         print(
             f"Epoch {epoch:02d}/{cfg.epochs} | "# 02d -> 2 basamaklı göster -> 01, 02, 03
             f"train_loss={train_loss:.4f} acc={train_acc:.4f} | "# .4f - > virgülden sonra 4 hane = 0.123456 -> 0.1234
             f"test_loss={test_loss:.4f} acc={test_acc:.4f} | "
-            f"current_lr: {current_lr:.6f} | "
+            f"current_lr: {current_lr:.6f}"
         )
 
         if test_acc > best_test_acc:

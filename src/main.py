@@ -56,7 +56,8 @@ def run_project(cfg: Config) -> dict:
         "best_test_acc": max(history["test_acc"]),
         "best_test_loss": min(history["test_loss"]),
         "scheduler_name": cfg.scheduler_name,
-        "scheduler_config": None
+        "scheduler_config": None,
+        "weight_decay": cfg.weight_decay
     }
 
     if cfg.scheduler_name == "step":
@@ -106,7 +107,8 @@ def run_hparam_experiments() -> None:
         Config(run_name="exp_04_steplr_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=10, scheduler_name="step", step_size=3, gamma=0.1),
         Config(run_name="exp_05_steplr_step5_gamma05_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=10, scheduler_name="step", step_size=5, gamma=0.5),
         Config(run_name="exp_06_plateau_factor05_pat1_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=10, scheduler_name="plateau", plateau_factor=0.5, plateau_patience=1),
-        Config(run_name="exp_07_plateau_factor05_pat0_ep12_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=12,scheduler_name="plateau", plateau_factor=0.5, plateau_patience=0)
+        Config(run_name="exp_07_plateau_factor05_pat0_ep12_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=12,scheduler_name="plateau", plateau_factor=0.5, plateau_patience=0),
+        Config(run_name="exp_08_plateau_pat0_epoch12_wd1e4_lr1e3_bs64", lr=1e-3, batch_size=64, epochs=12, weight_decay=1e-4, scheduler_name="plateau", plateau_factor=0.5, plateau_patience=0 )
     ]
 
     results = []
@@ -141,6 +143,7 @@ def run_hparam_experiments() -> None:
             f"best_acc={r['best_test_acc']:.4f} | "
             f"best_loss={r['best_test_loss']:.4f} | "
             f"lr={r['lr']} | bs={r['batch_size']} | "
+            f"wd={r['weight_decay']}"
             f"scheduler={scheduler_info} | "
             f"epochs_ran={r['epochs_ran']}"
         )
