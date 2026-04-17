@@ -23,7 +23,12 @@ class Config:
     epochs: int = 15
     early_stopping_patience: int = 3
     lr: float = 1e-3 # 1 * (10 ^ -3) = 0.001
+
     weight_decay: float = 0.0
+
+    hidden_dim: int = 0 # dense katmanı
+    dropout_rate: float = 0.0
+
 
     scheduler_name: str | None = None
     # StepLr ayarları
