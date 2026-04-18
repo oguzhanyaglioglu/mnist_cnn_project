@@ -204,6 +204,19 @@ def run_hparam_experiments() -> None:
             scheduler_name="plateau",
             plateau_factor=0.5,
             plateau_patience=0
+        ),
+
+        Config(
+            run_name="exp_12_drop01_dense128_plateau_pat0_ep12_lr1e3_bs64",
+            lr=1e-3,
+            batch_size=64,
+            epochs=12,
+            weight_decay=0.0,
+            dropout_rate=0.1,
+            hidden_dim=128,
+            scheduler_name="plateau",
+            plateau_factor=0.5,
+            plateau_patience=0
         )
 
     ]
