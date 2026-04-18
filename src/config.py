@@ -74,6 +74,7 @@ class Config:
     def best_experiment_path(self) -> str:
         return str(Path(self.outputs_root) / "best_experiment.json")
 
-
-
+    @property
+    def final_summary_path(self) -> str:
+        return str(Path(self.outputs_root) / "final_summary.txt")
 

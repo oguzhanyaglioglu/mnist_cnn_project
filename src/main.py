@@ -296,8 +296,16 @@ def load_best_experiment_config() -> Config:
     cfg = Config(
         run_name=best_run_name,
         lr=best_experiment["lr"],
-        batch_size=best_experiment["batch_size"]
+        batch_size=best_experiment["batch_size"],
+        hidden_dim=best_experiment["hidden_dim"],
+        dropout_rate=best_experiment["dropout_rate"],
+        weight_decay=best_experiment["weight_decay"],
+        scheduler_name=best_experiment["scheduler_name"],
     )
+
+    if cfg.scheduler_name == "plateau":
+        cfg.plateau_factor = best_experiment["scheduler_config"]["factor"]
+        cfg.plateau_patience = best_experiment["scheduler_config"]["plateau_patience"]
 
     print("\n[best_experiment_loaded]")
     print(best_experiment)
@@ -306,6 +314,7 @@ def load_best_experiment_config() -> Config:
 
 def evaluate_best_run() -> None:
     cfg = load_best_experiment_config()
+    summary_cfg = Config()
 
     print("\n[evaluating best run]")
     print(f"run_name: {cfg.run_name}")
@@ -316,6 +325,34 @@ def evaluate_best_run() -> None:
     predict_one_batch(cfg)
     show_confusion_matrix(cfg, cfg.outputs_dir)
     show_misclassified_images(cfg, cfg.outputs_dir)
+
+    best_experiment = load_json(summary_cfg.best_experiment_path)
+    save_final_summary(best_experiment, summary_cfg.final_summary_path)
+
+    print(f"\n[saved] {summary_cfg.final_summary_path}")
+
+def save_final_summary(best_experiment: dict, save_path: str) -> None:
+    lines = [
+        "Final MODEL SUMMARY",
+        "=" * 50,
+        f"run_name: {best_experiment['run_name']}",
+        f"best_test_acc: {best_experiment['best_test_acc']:.4f}",
+        f"best_test_loss: {best_experiment['best_test_loss']:.4f}",
+        f"lr: {best_experiment['lr']}",
+        f"batch_size: {best_experiment['batch_size']}",
+        f"hidden_dim: {best_experiment.get('hidden_dim')}",
+        f"dropout_rate: {best_experiment.get('dropout_rate')}",
+        f"weight_decay: {best_experiment.get('weight_decay')}",
+        f"scheduler_name: {best_experiment.get('scheduler_name')}",
+        f"scheduler_config: {best_experiment.get('scheduler_config')}",
+        "",
+        "Short comment:",
+        "Best model uses dense128 + dropout 0.1 + plateau scheduler."
+        "Errors mainly accur on visualy similar handwritten digits.",
+    ]
+    with open(save_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+
 
 def run_full_pipeline() -> None:
     print("\n" + "=" * 60)
@@ -374,14 +411,12 @@ def run_by_mode(mode: str) -> None:
             f"Choose from ['train', 'eval', 'full', 'debug']"
         )
 
-
-
 if __name__ == "__main__":
     # cfg = Config()
     # print(cfg)  -> <__main__.Config object at 0x000001F3A8C2D7F0> -> normal class çıktısı
     # print(cfg) -> Config(seed=42, batch_size=64, lr=0.001) -> dataclass çıktısı
 
-    run_mode = "train"
+    run_mode = "eval"
     run_by_mode(run_mode)
 
     # run_full_pipeline()
