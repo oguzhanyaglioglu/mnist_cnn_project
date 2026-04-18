@@ -37,7 +37,8 @@ from debug_train import (
 def run_project(cfg: Config) -> dict:
     print("\n" + "=" * 60)
     print(f"[run] {cfg.run_name}")
-    print(f"lr={cfg.lr} | batch_size={cfg.batch_size} | epochs={cfg.epochs}")
+    print(f"lr={cfg.lr} | batch_size={cfg.batch_size} | epochs={cfg.epochs} | hidden_dim={cfg.hidden_dim} | dropout={cfg.dropout_rate} "
+          f"wd={cfg.weight_decay} | scheduler_name={cfg.scheduler_name}")
 
     train_loader, test_loader = build_dataloaders(cfg)
     history = run_training(cfg, train_loader, test_loader)
@@ -53,11 +54,13 @@ def run_project(cfg: Config) -> dict:
         "lr": cfg.lr,
         "batch_size": cfg.batch_size,
         "epochs_ran": len(history["train_loss"]),
-        "best_test_acc": max(history["test_acc"]),
-        "best_test_loss": min(history["test_loss"]),
+        "hidden_dim": cfg.hidden_dim,
+        "dropout_rate": cfg.dropout_rate,
+        "weight_decay": cfg.weight_decay,
         "scheduler_name": cfg.scheduler_name,
         "scheduler_config": None,
-        "weight_decay": cfg.weight_decay
+        "best_test_acc": max(history["test_acc"]),
+        "best_test_loss": min(history["test_loss"]),
     }
 
     if cfg.scheduler_name == "step":
@@ -103,7 +106,8 @@ def run_hparam_experiments() -> None:
     experiments = [
         Config(
             run_name="exp_01_baseline_lr1e3_bs64",
-            lr=1e-3, batch_size=64,
+            lr=1e-3,
+            batch_size=64,
             epochs=10,
             scheduler_name=None
         ),
@@ -121,15 +125,16 @@ def run_hparam_experiments() -> None:
             scheduler_name=None
         ),
         Config(
-            run_name="exp_04_steplr_lr1e3_bs64",
-            lr=1e-3, batch_size=64,
+            run_name="exp_04_steplr_gamma01_lr1e3_bs64",
+            lr=1e-3,
+            batch_size=64,
             epochs=10,
             scheduler_name="step",
             step_size=3,
             gamma=0.1
         ),
         Config(
-            run_name="exp_05_steplr_step5_gamma05_lr1e3_bs64",
+            run_name="exp_05_gamma05_step5_steplr_lr1e3_bs64",
             lr=1e-3,
             batch_size=64,
             epochs=10,
@@ -147,7 +152,7 @@ def run_hparam_experiments() -> None:
             plateau_patience=1
         ),
         Config(
-            run_name="exp_07_plateau_factor05_pat0_ep12_lr1e3_bs64",
+            run_name="exp_07_pat0_plateau_factor05_ep12_lr1e3_bs64",
             lr=1e-3,
             batch_size=64,
             epochs=12,
@@ -156,7 +161,7 @@ def run_hparam_experiments() -> None:
             plateau_patience=0
         ),
         Config(
-            run_name="exp_08_plateau_pat0_epoch12_wd1e4_lr1e3_bs64",
+            run_name="exp_08_wd1e4_plateau_pat0_ep12_lr1e3_bs64",
             lr=1e-3,
             batch_size=64,
             epochs=12,
@@ -166,7 +171,7 @@ def run_hparam_experiments() -> None:
             plateau_patience=0
         ),
         Config(
-            run_name="exp_09_plateau_pat0_epoch12_wd1e5_lr1e3_bs64",
+            run_name="exp_09_wd1e5_plateau_pat0_ep12_lr1e3_bs64",
             lr=1e-3,
             batch_size=64,
             epochs=12,
@@ -177,7 +182,7 @@ def run_hparam_experiments() -> None:
         ),
 
         Config(
-            run_name="exp_10_plateau_pat0_ep12_dense128_lr1e3_bs64",
+            run_name="exp_10_dense128_plateau_pat0_ep12_lr1e3_bs64",
             lr=1e-3,
             batch_size=64,
             epochs=12,
@@ -187,7 +192,20 @@ def run_hparam_experiments() -> None:
             scheduler_name="plateau",
             plateau_factor=0.5,
             plateau_patience=0
+        ),
+        Config(
+            run_name="exp_11_drop03_dense128_plateau_pat0_ep12_lr1e3_bs64",
+            lr=1e-3,
+            batch_size=64,
+            epochs=12,
+            weight_decay=0.0,
+            dropout_rate=0.3,
+            hidden_dim=128,
+            scheduler_name="plateau",
+            plateau_factor=0.5,
+            plateau_patience=0
         )
+
     ]
 
     results = []
@@ -222,8 +240,10 @@ def run_hparam_experiments() -> None:
             f"best_acc={r['best_test_acc']:.4f} | "
             f"best_loss={r['best_test_loss']:.4f} | "
             f"lr={r['lr']} | bs={r['batch_size']} | "
-            f"wd={r['weight_decay']} | "
             f"scheduler={scheduler_info} | "
+            f"wd={r['weight_decay']} | "
+            f"hidden_dim={r['hidden_dim']} | "
+            f"dropout={r['dropout_rate']} | "
             f"epochs_ran={r['epochs_ran']}"
         )
         # exp; 1. exp_01_baseline_lr1e3_bs64 | best_acc=0.9821 | best_loss=0.0542 | lr=0.001 | bs=64 | epochs_ran=10

@@ -66,7 +66,7 @@ class SimpleCNN2(nn.Module):
         if self.hidden_dim > 0:
             x = self.relu(self.fc1(x)) # [B, hidden_dim]    -> fc1
             if self.dropout_rate > 0:
-                x = x.dropout(x)       # droput'u config'e bağlı uyguluyoruz, yani hidden layer(dense) varsa ve dropout > 0 ise
+                x = self.dropout(x)       # droput'u config'e bağlı uyguluyoruz, yani hidden layer(dense) varsa ve dropout > 0 ise
             x = self.fc2(x)            # [B, 10]     -> fc2
         else:
             x = self.fc_out(x)

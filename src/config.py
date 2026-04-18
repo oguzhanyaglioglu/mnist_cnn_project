@@ -19,16 +19,17 @@ OUTPUTS_ROOT = BASE_DIR / "outputs"
 @dataclass
 class Config:
     seed: int = 42
+
+    lr: float = 1e-3  # 1 * (10 ^ -3) = 0.001
     batch_size: int = 64
     epochs: int = 15
+
     early_stopping_patience: int = 3
-    lr: float = 1e-3 # 1 * (10 ^ -3) = 0.001
 
-    weight_decay: float = 0.0
-
-    hidden_dim: int = 0 # dense katmanı
+    hidden_dim: int = 0  # dense katmanı
     dropout_rate: float = 0.0
 
+    weight_decay: float = 0.0
 
     scheduler_name: str | None = None
     # StepLr ayarları
@@ -38,6 +39,7 @@ class Config:
     plateau_factor: float = 0.1 # mevcut step size'ı kaç ile çarpıp güncelleyeceğm(Steplr'deki gamma mantığı)
     # kaç epoch boyunca loss, accurucy vb. başarı metriklerinde(loss daha iyi sonuç verir), gelişme(improvement) olmazsa duracağım?
     plateau_patience: int = 2 # 2 epoch boyunca sabret(patience), 3. epoch'da da gelişme olmazsa lr'i güncelle
+
 
     num_workers: int = 0
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
