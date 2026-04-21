@@ -1,6 +1,7 @@
 import torch
 import os
 import matplotlib.pyplot as plt
+import numpy as np
 from config import Config
 from data_utils import build_dataloaders
 from utils import load_model
@@ -35,8 +36,8 @@ def show_misclassified_images(cfg: Config, save_dir: str, ckpt_path: str | None 
 
     _, test_loader = build_dataloaders(cfg)
 
-    model = build_model(cfg)
     # model = SimpleCNN2().to(cfg.device)
+    # model = build_model(cfg)
     model = load_model(cfg, ckpt_path)
     model.eval()
 
@@ -85,13 +86,12 @@ def build_confusion_matrix(cfg: Config, ckpt_path: str | None = None) -> torch.T
     if ckpt_path is None:
         ckpt_path = cfg.ckpt_path
 
-
     _, test_loader = build_dataloaders(cfg)
 
-    model = build_model(cfg)
     # model = SimpleCNN2().to(cfg.device)
+    # model = build_model(cfg)
+    # model.eval()
     model = load_model(cfg, ckpt_path)
-    model.eval()
 
     # confision matris için 10x10'luk matris oluşruldu(10 sınıf olduğu için 0-9), satır doğru etiket, sutun tahmin
     cm = torch.zeros(10,10, dtype=torch.int64)
@@ -109,6 +109,22 @@ def build_confusion_matrix(cfg: Config, ckpt_path: str | None = None) -> torch.T
             for true_label, pred_label in zip(y.view(-1), preds.view(-1)):
                 cm[true_label.item(), pred_label.item()] += 1 # matriste eşleşen elemana çeltik atar
     return cm
+
+def get_top_confusions(cm: np.ndarray, top_k: int = 3):
+    cm_copy = cm.clone()
+    cm_copy.fill_diagonal_(0) # bizim yanlış tahminler lazım, bu yüzden ortadaki diaganol doğruları sıfırlıyoruz
+
+    pairs = []
+    for i in range(cm_copy.shape[0]): # satırlar, true labels
+        for j in range(cm_copy.shape[1]): # sutunlar, predictid labels
+            if cm_copy[i, j] > 0: # eğer etiket ve tahminlerin kesişimi sıfırdan büyükse, yani yanlış tahmin varsa pairs içine ekle
+                pairs.append((i, j, int(cm_copy[i, j]))) # i satır, j sutun, cm_copy[i, j] o hücredeki sayı
+
+    # pairs'ın üçüncü elemanı yani yanlış çift sayısına göre (x[2]), büyükten küçüğe göre (reverse=True) sırala
+    # örn. (i, j, count) -> (2, 7, 6) -> model 2 rakamını 6 defa 7 zannetmiş, x[0] = 2 (true), x[1] = 7 (predict),   x[2] = 6
+    pairs.sort(key=lambda x: x[2], reverse=True)
+    return pairs[:top_k]
+
 
 def show_confusion_matrix(cfg: Config, save_dir: str, ckpt_path: str | None = None, ) -> None:
     if ckpt_path is None:

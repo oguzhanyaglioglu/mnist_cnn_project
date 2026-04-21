@@ -7,8 +7,10 @@ from eval_utils import (
     plot_history,
     plot_lr_curve,
     predict_one_batch,
+    build_confusion_matrix,
     show_confusion_matrix,
     show_misclassified_images,
+    get_top_confusions
 )
 
 from debug_data import (
@@ -312,6 +314,45 @@ def load_best_experiment_config() -> Config:
 
     return cfg
 
+def save_final_summary(best_experiment: dict, cm, save_path: str) -> None:
+
+    top_confusions = get_top_confusions(cm, top_k=5)
+
+    lines = [
+        "Final MODEL SUMMARY",
+        "=" * 60,
+        f"run_name: {best_experiment['run_name']}",
+        f"best_test_acc: {best_experiment['best_test_acc']:.4f}",
+        f"best_test_loss: {best_experiment['best_test_loss']:.4f}",
+        "",
+        "CONFIG",
+        "-" * 60,
+        f"lr: {best_experiment['lr']}",
+        f"batch_size: {best_experiment['batch_size']}",
+        f"hidden_dim: {best_experiment.get('hidden_dim')}",
+        f"dropout_rate: {best_experiment.get('dropout_rate')}",
+        f"weight_decay: {best_experiment.get('weight_decay')}",
+        f"scheduler_name: {best_experiment.get('scheduler_name')}",
+        f"scheduler_config: {best_experiment.get('scheduler_config')}",
+        "",
+        "TOP CONFUSIONS",
+        "-" * 60,
+    ]
+
+    for true_label, pred_label, count in top_confusions:
+        lines.append(f"true={true_label} -> pred={pred_label} | count={count}")
+
+    lines += [
+        "",
+        "SHORT COMMENT",
+        "-" * 60,
+        "Best model uses hidden_dim=128, dropout 0.1, plateau scheduler and no weight decay",
+        "Most errors mainly accur on visualy similar handwritten digits.",
+    ]
+
+    with open(save_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+
 def evaluate_best_run() -> None:
     cfg = load_best_experiment_config()
     summary_cfg = Config()
@@ -322,36 +363,16 @@ def evaluate_best_run() -> None:
     print(f"history_path: {cfg.history_path}")
 
     run_from_saved_history(cfg)
+
     predict_one_batch(cfg)
+    cm = build_confusion_matrix(cfg)
     show_confusion_matrix(cfg, cfg.outputs_dir)
     show_misclassified_images(cfg, cfg.outputs_dir)
 
     best_experiment = load_json(summary_cfg.best_experiment_path)
-    save_final_summary(best_experiment, summary_cfg.final_summary_path)
+    save_final_summary(best_experiment, cm, summary_cfg.final_summary_path)
 
     print(f"\n[saved] {summary_cfg.final_summary_path}")
-
-def save_final_summary(best_experiment: dict, save_path: str) -> None:
-    lines = [
-        "Final MODEL SUMMARY",
-        "=" * 50,
-        f"run_name: {best_experiment['run_name']}",
-        f"best_test_acc: {best_experiment['best_test_acc']:.4f}",
-        f"best_test_loss: {best_experiment['best_test_loss']:.4f}",
-        f"lr: {best_experiment['lr']}",
-        f"batch_size: {best_experiment['batch_size']}",
-        f"hidden_dim: {best_experiment.get('hidden_dim')}",
-        f"dropout_rate: {best_experiment.get('dropout_rate')}",
-        f"weight_decay: {best_experiment.get('weight_decay')}",
-        f"scheduler_name: {best_experiment.get('scheduler_name')}",
-        f"scheduler_config: {best_experiment.get('scheduler_config')}",
-        "",
-        "Short comment:",
-        "Best model uses dense128 + dropout 0.1 + plateau scheduler."
-        "Errors mainly accur on visualy similar handwritten digits.",
-    ]
-    with open(save_path, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
 
 
 def run_full_pipeline() -> None:
