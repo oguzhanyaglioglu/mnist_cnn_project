@@ -293,21 +293,31 @@ def load_best_experiment_config() -> Config:
     summary_cfg = Config()
     best_experiment = load_json(summary_cfg.best_experiment_path)
 
-    best_run_name = best_experiment["run_name"]
+    scheduler_config = best_experiment.get("scheduler_config") or {} # {} -> schedulrr name verilip config ayarları verilmediği durumlara önlem
+
+    # Daha önceki ayarlarım, ilk üç config ayarındaki gibi sabit ve keskindi.
+    # Fakat bu daha önceki deneylerde var olmayan weight decay, dropout vb optimizasyon ayarları için hata alma risk taşıyordu.
+    # Bunun için bütün configlerde var olan ayarlar haricindekiler için get kullanımına geçildi.
+    # Fonksiyonun kullanımı şu şekilde -> get(a, b) = eğer fonksiyonda verilen ayar varsa onu (a'yı) kullan, yoksa b'yi kullan
+    # B ayarları için refarans olarak config dosyasındaki ayarlar alındı, bu default'a güvenli bir dönüş sağladı.
 
     cfg = Config(
-        run_name=best_run_name,
+        run_name=best_experiment["run_name"],
         lr=best_experiment["lr"],
         batch_size=best_experiment["batch_size"],
-        hidden_dim=best_experiment["hidden_dim"],
-        dropout_rate=best_experiment["dropout_rate"],
-        weight_decay=best_experiment["weight_decay"],
-        scheduler_name=best_experiment["scheduler_name"],
+        hidden_dim=best_experiment.get("hidden_dim", 0),
+        dropout_rate=best_experiment.get("dropout_rate", 0.0),
+        weight_decay=best_experiment.get("weight_decay", 0.0),
+        scheduler_name=best_experiment.get("scheduler_name", None),
     )
 
     if cfg.scheduler_name == "plateau":
-        cfg.plateau_factor = best_experiment["scheduler_config"]["factor"]
-        cfg.plateau_patience = best_experiment["scheduler_config"]["plateau_patience"]
+        cfg.plateau_factor = scheduler_config.get("factor", 0.1)
+        cfg.plateau_patience = scheduler_config.get("plateau_patience", 2)
+
+    elif cfg.scheduler_name == "steplr":
+        cfg.step_size = scheduler_config.get("step_size", 3)
+        cfg.gamma = scheduler_config.get("gamma", 0.1)
 
     print("\n[best_experiment_loaded]")
     print(best_experiment)
