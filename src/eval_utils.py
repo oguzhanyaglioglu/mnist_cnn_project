@@ -2,6 +2,7 @@ import torch
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+import json
 from config import Config
 from data_utils import build_dataloaders
 from utils import load_model
@@ -212,4 +213,36 @@ def plot_lr_curve(history: dict, save_dir: str) -> None:
     plt.tight_layout()
     plt.savefig(os.path.join(save_dir, "lr_curve.png"))
     plt.show()
+
+def save_final_summary_json(best_experiment: dict, cm, save_path: str) -> None:
+
+    top_confusions = get_top_confusions(cm, top_k=5)
+    summary = {
+        "run_name": best_experiment["run_name"],
+        "best_test_acc": best_experiment["best_test_acc"],
+        "best_test_loss": best_experiment["best_test_loss"],
+        "config": {
+            "lr": best_experiment["lr"],
+            "batch_size": best_experiment["batch_size"],
+            "hidden_dim": best_experiment.get("hidden_dim"),
+            "dropout_rate": best_experiment.get("dropout_rate"),
+            "weight_decay": best_experiment.get("weight_decay"),
+            "scheduler_name": best_experiment.get("scheduler_name"),
+            "scheduler_config": best_experiment.get("scheduler_config")
+        },
+        "top_confusions": [
+            {
+            "true_label": true_label,
+            "pred_label": pred_label,
+            "count": count,
+            }
+            for true_label, pred_label, count in top_confusions
+        ],
+        "comment": [
+            "Best model uses hidden_dim=128, dropout=0.1, plateau scheduler, and no weight decay.",
+            "Most errors occur between visually similar handwritten digits."
+        ],
+    }
+    with open(save_path, "w", encoding="utf-8") as f:
+        json.dump(summary, f, indent=4)
 

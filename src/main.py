@@ -10,7 +10,8 @@ from eval_utils import (
     build_confusion_matrix,
     show_confusion_matrix,
     show_misclassified_images,
-    get_top_confusions
+    get_top_confusions,
+    save_final_summary_json
 )
 
 from debug_data import (
@@ -381,8 +382,10 @@ def evaluate_best_run() -> None:
 
     best_experiment = load_json(summary_cfg.best_experiment_path)
     save_final_summary(best_experiment, cm, summary_cfg.final_summary_path)
+    save_final_summary_json(best_experiment, cm, summary_cfg.final_summary_path_json)
 
-    print(f"\n[saved] {summary_cfg.final_summary_path}")
+    print(f"\n[saved txt] {summary_cfg.final_summary_path}")
+    print(f"\n[saved json] {summary_cfg.final_summary_path_json}")
 
 
 def run_full_pipeline() -> None:

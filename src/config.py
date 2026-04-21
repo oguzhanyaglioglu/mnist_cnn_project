@@ -78,3 +78,7 @@ class Config:
     def final_summary_path(self) -> str:
         return str(Path(self.outputs_root) / "final_summary.txt")
 
+    @property
+    def final_summary_path_json(self) -> str:
+        return str(Path(self.outputs_root) / "final_summary.json")
+
