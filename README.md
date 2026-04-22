@@ -59,7 +59,6 @@ mnist_cnn_project/
 - PyTorch
 - torchvision
 - matplotlib
-- scikit-learn
 - numpy
 
 ## Installation
@@ -277,3 +276,23 @@ Most errors occur between visually similar handwritten digits rather than comple
 - The project is designed to be modular and educational.
 - Debug functions are separated from the main workflow to keep the pipeline clean.
 - Final evaluation artifacts are saved inside the selected best run folder.
+
+## Project Status
+
+Current status: Completed
+
+Implemented:
+- baseline training pipeline
+- experiment tracking
+- scheduler comparison
+- dense layer comparison
+- dropout comparison
+- weight decay comparison
+- best model selection
+- final evaluation
+- confusion matrix analysis
+- misclassified sample analysis
+- final text and JSON summaries
+
+Best final model:
+`exp_12_drop01_dense128_plateau_pat0_ep12_lr1e3_bs64`

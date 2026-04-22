@@ -330,7 +330,7 @@ def save_final_summary(best_experiment: dict, cm, save_path: str) -> None:
     top_confusions = get_top_confusions(cm, top_k=5)
 
     lines = [
-        "Final MODEL SUMMARY",
+        "FINAL MODEL SUMMARY",
         "=" * 60,
         f"run_name: {best_experiment['run_name']}",
         f"best_test_acc: {best_experiment['best_test_acc']:.4f}",
@@ -357,8 +357,8 @@ def save_final_summary(best_experiment: dict, cm, save_path: str) -> None:
         "",
         "SHORT COMMENT",
         "-" * 60,
-        "Best model uses hidden_dim=128, dropout 0.1, plateau scheduler and no weight decay",
-        "Most errors mainly occur on visually similar handwritten digits.",
+        "Best model uses hidden_dim=128, dropout=0.1, a plateau scheduler, and no weight decay.",
+        "Most errors occur between visually similar handwritten digits."
     ]
 
     with open(save_path, "w", encoding="utf-8") as f:

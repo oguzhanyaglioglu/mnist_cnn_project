@@ -102,7 +102,7 @@ def run_training(cfg: Config, train_loader: DataLoader, test_loader: DataLoader)
             f"Epoch {epoch:02d}/{cfg.epochs} | "# 02d -> 2 basamaklı göster -> 01, 02, 03
             f"train_loss={train_loss:.4f} acc={train_acc:.4f} | "# .4f - > virgülden sonra 4 hane = 0.123456 -> 0.1234
             f"test_loss={test_loss:.4f} acc={test_acc:.4f} | "
-            f"current_lr: {current_lr:.6f}SS"
+            f"current_lr: {current_lr:.6f}"
         )
 
         if test_acc > best_test_acc:

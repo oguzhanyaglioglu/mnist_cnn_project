@@ -6,7 +6,6 @@ import json
 from config import Config
 from data_utils import build_dataloaders
 from utils import load_model
-from model import build_model
 
 
 # Inferance fonksiyonu -> öğrendikten sonra tahmin yapma aşaması
@@ -239,7 +238,7 @@ def save_final_summary_json(best_experiment: dict, cm, save_path: str) -> None:
             for true_label, pred_label, count in top_confusions
         ],
         "comment": [
-            "Best model uses hidden_dim=128, dropout=0.1, plateau scheduler, and no weight decay.",
+            "Best model uses hidden_dim=128, dropout=0.1, a plateau scheduler, and no weight decay.",
             "Most errors occur between visually similar handwritten digits."
         ],
     }
