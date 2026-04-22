@@ -7,21 +7,23 @@ __pycache__/
 *.pyo
 *.pyd
 
-# IDE files
-.idea/
-.vscode/
-
-# Jupyter
+# Jupyter / notebook cache
 .ipynb_checkpoints/
 
-# Data and outputs
-src/data/
+# OS files
+.DS_Store
+Thumbs.db
+
+# Training outputs
 outputs/
 
 # Model checkpoints
 *.pt
 *.pth
 
-# OS files
-.DS_Store
-Thumbs.db
+# Local environment files
+.env
+
+# IDE files
+.vscode/
+.idea/

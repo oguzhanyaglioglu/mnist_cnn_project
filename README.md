@@ -84,6 +84,37 @@ Then install dependencies:
 pip install -r requirements.txt
 ```
 
+## Quick Start
+
+```bash
+git clone <repo-url>
+cd mnist_cnn_project
+python -m venv .venv
+```
+
+### Windows
+```bash
+.venv\Scripts\activate
+```
+
+### macOS / Linux
+```bash
+source .venv/bin/activate
+```
+
+```bash
+pip install -r requirements.txt
+cd src
+python main.py
+```
+
+Before running, choose the mode in `main.py`:
+
+```python
+run_mode = "train"   # or "eval", "full", "debug"
+run_by_mode(run_mode)
+```
+
 ## How to Run
 
 Go into the `src` folder and run:
@@ -207,6 +238,11 @@ Contains functions related to:
 
 ## Final Results
 
+### Best Model
+- Run name: `exp_12_drop01_dense128_plateau_pat0_ep12_lr1e3_bs64`
+- Best test accuracy: 0.9919
+- Best test loss: 0.0272
+
 ### Best Configuration
 - Learning rate: 0.001
 - Batch size: 64
@@ -216,10 +252,6 @@ Contains functions related to:
 - Scheduler: ReduceLROnPlateau
 - Plateau factor: 0.5
 - Plateau patience: 0
-
-### Best Performance
-- Best test accuracy: 0.9919
-- Best test loss: 0.0272
 
 ### Key Findings
 - Adding a hidden dense layer improved the model noticeably.
