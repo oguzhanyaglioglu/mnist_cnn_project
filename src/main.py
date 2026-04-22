@@ -2,6 +2,7 @@ from config import Config
 from data_utils import build_dataloaders
 from train_utils import run_training
 from utils import set_seed, load_json, save_json
+import argparse
 
 from eval_utils import (
     plot_history,
@@ -445,13 +446,28 @@ def run_by_mode(mode: str) -> None:
             f"Choose from ['train', 'eval', 'full', 'debug']"
         )
 
+def get_cli_args():
+
+    parser = argparse.ArgumentParser(description="MNIST CNN project runner") # parser nesnesi oluşturuyorum
+    parser.add_argument( # terminalden hangi bilgileri almak istediğimi tanımlıyorum
+        "--mode",
+        type=str,
+        default="eval",
+        choices=["train", "eval", "full", "debug"],
+        help="Choose which pipeline mode to run."
+    )
+
+    return parser.parse_args() # kullanıcının verdiği komutu okuyup, komuttaki bilgileri (mode vs) ayırıyorum
+
 if __name__ == "__main__":
     # cfg = Config()
     # print(cfg)  -> <__main__.Config object at 0x000001F3A8C2D7F0> -> normal class çıktısı
     # print(cfg) -> Config(seed=42, batch_size=64, lr=0.001) -> dataclass çıktısı
 
-    run_mode = "eval"
-    run_by_mode(run_mode)
+    # run_mode = "eval"
+    args = get_cli_args()
+    print(args)
+    run_by_mode(args.mode)
 
     # run_full_pipeline()
     # evaluate_best_run()

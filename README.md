@@ -86,7 +86,7 @@ pip install -r requirements.txt
 ## Quick Start
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/oguzhanyaglioglu/mnist_cnn_project.git
 cd mnist_cnn_project
 python -m venv .venv
 ```
@@ -116,20 +116,18 @@ run_by_mode(run_mode)
 
 ## How to Run
 
-Go into the `src` folder and run:
+Go into the `src` folder and run one of the following commands:
 
 ```bash
-python main.py
+python main.py --mode train
+python main.py --mode eval
+python main.py --mode full
+python main.py --mode debug
 ```
 
 ## Main Modes
 
-The project uses a mode-based runner in `main.py`.
 
-```python
-run_mode = "full"
-run_by_mode(run_mode)
-```
 
 Available modes:
 
