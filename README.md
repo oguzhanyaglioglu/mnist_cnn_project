@@ -107,13 +107,6 @@ cd src
 python main.py
 ```
 
-Before running, choose the mode in `main.py`:
-
-```python
-run_mode = "train"   # or "eval", "full", "debug"
-run_by_mode(run_mode)
-```
-
 ## How to Run
 
 Go into the `src` folder and run one of the following commands:

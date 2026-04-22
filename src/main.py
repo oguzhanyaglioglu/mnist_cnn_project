@@ -466,7 +466,7 @@ if __name__ == "__main__":
 
     # run_mode = "eval"
     args = get_cli_args()
-    print(args)
+    # print(args)
     run_by_mode(args.mode)
 
     # run_full_pipeline()
