@@ -1,8 +1,8 @@
 # MNIST CNN Project
 
-This project is a clean and step-by-step PyTorch CNN implementation for the MNIST handwritten digit dataset.
+This project is a clean, step-by-step PyTorch CNN implementation for the MNIST handwritten digit dataset.
 
-The goal of the project is not only to train a working model, but also to understand each part of the pipeline clearly:
+The goal is not only to train a strong model, but also to understand the full pipeline clearly:
 - configuration
 - data loading
 - transforms
@@ -10,7 +10,8 @@ The goal of the project is not only to train a working model, but also to unders
 - training loop
 - evaluation
 - checkpoint saving/loading
-- confusion matrix
+- experiment tracking
+- confusion matrix analysis
 - misclassified sample analysis
 - debug functions
 
@@ -32,8 +33,7 @@ mnist_cnn_project/
     ├── debug_model.py
     ├── debug_train.py
     ├── main.py
-    ├── data/
-    └── best_mnist_cnn.pt
+    └── data/
 ```
 
 ## Features
@@ -42,9 +42,12 @@ mnist_cnn_project/
 - Training and evaluation pipeline
 - Checkpoint saving and loading
 - Training history tracking
-- Loss and accuracy plots
+- Loss, accuracy, and learning rate plots
+- Hyperparameter experiment tracking
+- Best experiment selection and loading
 - Confusion matrix visualization
 - Misclassified image visualization
+- Final text/JSON summary generation
 - Separate debug modules for:
   - data
   - model
@@ -56,6 +59,8 @@ mnist_cnn_project/
 - PyTorch
 - torchvision
 - matplotlib
+- scikit-learn
+- numpy
 
 ## Installation
 
@@ -89,29 +94,39 @@ python main.py
 
 ## Main Modes
 
-In `main.py`, there are two main flows:
+The project uses a mode-based runner in `main.py`.
 
-### Normal project flow
 ```python
-run_project(cfg)
-# run_debug(cfg)
+run_mode = "full"
+run_by_mode(run_mode)
 ```
 
-This runs:
-- training
-- history printing
-- loss/accuracy plots
+Available modes:
+
+### `train`
+Runs the experiment set and saves:
+- per-run checkpoints
+- training history JSON files
+- loss, accuracy, and learning rate plots
+- experiment summary files
+- best experiment file
+
+### `eval`
+Loads the best saved experiment automatically and runs:
+- history plotting
 - one-batch prediction
-- misclassified image visualization
 - confusion matrix
+- misclassified sample visualization
+- final summary generation
 
-### Debug flow
-```python
-# run_project(cfg)
-run_debug(cfg)
-```
+### `full`
+Runs the full pipeline:
+- hyperparameter experiments
+- best experiment selection
+- best experiment evaluation
 
-This runs the debug functions for:
+### `debug`
+Runs the debug utilities for:
 - config
 - seed
 - transforms
@@ -121,13 +136,11 @@ This runs the debug functions for:
 - one-batch loss
 - one training step
 
-Some debug functions that require a saved checkpoint may stay commented out until a model checkpoint is available.
-
 ## Model
 
-The main model used in this project is `SimpleCNN2`.
+The final best-performing model uses a CNN classifier with one hidden dense layer and light dropout.
 
-Architecture summary:
+### Final Architecture
 - Conv2d(1 → 8)
 - ReLU
 - MaxPool2d
@@ -135,27 +148,38 @@ Architecture summary:
 - ReLU
 - MaxPool2d
 - Flatten
-- Linear(16 * 7 * 7 → 10)
+- Linear(16 × 7 × 7 → 128)
+- ReLU
+- Dropout(0.1)
+- Linear(128 → 10)
 
-## Training Output
+## Training and Experiment Tracking
 
 During training, the project tracks:
 - `train_loss`
 - `train_acc`
 - `test_loss`
 - `test_acc`
+- `lr`
 
-These values are stored in a history dictionary and then visualized with plots.
+The project also saves:
+- per-run `training_history.json`
+- best checkpoint for each run
+- `experiment_results.json`
+- `best_experiment.json`
 
 ## Evaluation Tools
 
 The project includes:
 - `predict_one_batch(...)`
 - `plot_history(...)`
+- `plot_lr_curve(...)`
 - `show_confusion_matrix(...)`
 - `show_misclassified_images(...)`
+- `save_final_summary(...)`
+- `save_final_summary_json(...)`
 
-These help inspect model behavior beyond just accuracy numbers.
+These tools help inspect model behavior beyond just accuracy numbers.
 
 ## Debug Modules
 
@@ -181,17 +205,43 @@ Contains functions related to:
 - checkpoint prediction checks
 - misclassification inspection
 
+## Final Results
+
+### Best Configuration
+- Learning rate: 0.001
+- Batch size: 64
+- Hidden dimension: 128
+- Dropout rate: 0.1
+- Weight decay: 0.0
+- Scheduler: ReduceLROnPlateau
+- Plateau factor: 0.5
+- Plateau patience: 0
+
+### Best Performance
+- Best test accuracy: 0.9919
+- Best test loss: 0.0272
+
+### Key Findings
+- Adding a hidden dense layer improved the model noticeably.
+- A small dropout rate of 0.1 improved generalization.
+- A larger dropout rate of 0.3 reduced performance slightly.
+- Weight decay did not improve the best dense + dropout configuration.
+- ReduceLROnPlateau performed better than the tested StepLR setups.
+
+### Top Confusions
+The model mainly confused visually similar handwritten digits, especially:
+- 2 and 7
+- 7 and 2
+- 9 and 4
+- 6 and 0
+- 4 and 9
+
+### Error Analysis
+Most errors occur between visually similar handwritten digits rather than completely unrelated classes.
+
 ## Notes
 
-- The checkpoint path is controlled by `Config`.
-- The project is designed to be educational and modular.
-- Debug functions are separated from the main workflow to keep the main pipeline clean.
-
-## Future Improvements
-
-Possible next steps:
-- split entry points into `train.py` and `debug_main.py`
-- add README examples with output screenshots
-- add per-class accuracy
-- add precision/recall/F1 metrics
-- make checkpoint/output folders more  structured
+- Output paths are controlled by `Config`.
+- The project is designed to be modular and educational.
+- Debug functions are separated from the main workflow to keep the pipeline clean.
+- Final evaluation artifacts are saved inside the selected best run folder.

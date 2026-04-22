@@ -297,7 +297,7 @@ def load_best_experiment_config() -> Config:
     scheduler_config = best_experiment.get("scheduler_config") or {} # {} -> schedulrr name verilip config ayarları verilmediği durumlara önlem
 
     # Daha önceki ayarlarım, ilk üç config ayarındaki gibi sabit ve keskindi.
-    # Fakat bu daha önceki deneylerde var olmayan weight decay, dropout vb optimizasyon ayarları için hata alma risk taşıyordu.
+    # Fakat bu daha önceki deneylerde var olmayan weight decay, dropout vb optimizasyon ayarları için hata riski taşıyordu.
     # Bunun için bütün configlerde var olan ayarlar haricindekiler için get kullanımına geçildi.
     # Fonksiyonun kullanımı şu şekilde -> get(a, b) = eğer fonksiyonda verilen ayar varsa onu (a'yı) kullan, yoksa b'yi kullan
     # B ayarları için refarans olarak config dosyasındaki ayarlar alındı, bu default'a güvenli bir dönüş sağladı.
@@ -358,7 +358,7 @@ def save_final_summary(best_experiment: dict, cm, save_path: str) -> None:
         "SHORT COMMENT",
         "-" * 60,
         "Best model uses hidden_dim=128, dropout 0.1, plateau scheduler and no weight decay",
-        "Most errors mainly accur on visualy similar handwritten digits.",
+        "Most errors mainly occur on visually similar handwritten digits.",
     ]
 
     with open(save_path, "w", encoding="utf-8") as f:
